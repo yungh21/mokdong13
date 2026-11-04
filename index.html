@@ -5,8 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>목동신시가지 13단지 관리사무소</title>
 
+  <!-- Google Fonts: Pretendard alternative Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'Pretendard', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#F0FDF9',
+              100: '#CCFBEE',
+              500: '#14B8A6',
+              600: '#0D9488',
+              700: '#0F766E',
+              900: '#134E4A',
+            },
+            accent: {
+              blue: '#2563EB',
+              indigo: '#4F46E5',
+              cyan: '#06B6D4',
+            }
+          }
+        }
+      }
+    }
+  </script>
 
   <!-- React 18 & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -16,16 +48,25 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      letter-spacing: -0.015em;
+    }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-6px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-fadeIn {
-      animation: fadeIn 0.25s ease-out forwards;
+      animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased">
+<body class="bg-[#F8FAFC] text-slate-800 antialiased selection:bg-teal-500 selection:text-white">
   <div id="root"></div>
 
   <!-- Lucide 아이콘 인라인 SVG 정의 및 React 애플리케이션 -->
@@ -441,7 +482,7 @@
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span> 네이버지도
                   </a>
                   <a
-                    href="https://map.kakao.com/link/search/서울특별시 양천구 목동동로 100"
+                    href="https://map.kakao.com/link/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%96%91%EC%82%B0%EA%B5%AC%20%EB%AA%A9%EB%8F%99%EB%8F%99%EB%A1%9C%20100"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-yellow-950 text-yellow-300 hover:text-white hover:bg-yellow-800 transition text-[11px] font-medium border border-yellow-700/50"
@@ -679,7 +720,7 @@
                             <ExternalLink className="w-3.5 h-3.5" /> 네이버지도
                           </a>
                           <a
-                            href="https://map.kakao.com/link/search/서울특별시 양천구 목동동로 100"
+                            href="https://map.kakao.com/link/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%96%91%EC%82%B0%EA%B5%AC%20%EB%AA%A9%EB%8F%99%EB%8F%99%EB%A1%9C%20100"
                             target="_blank"
                             rel="noreferrer"
                             className="flex-1 py-2 px-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5"
@@ -986,17 +1027,19 @@
                             <div
                               key={option.id}
                               onClick={() => handleVote(poll.id, option.id)}
-                              className={`p-3.5 rounded-xl border transition cursor-pointer ${
-                                isSelected ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-500/20' : 'border-slate-200 hover:bg-slate-50'
+                              className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+                                isSelected
+                                  ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-500/20 shadow-sm'
+                                  : 'border-slate-200 hover:bg-slate-50'
                               }`}
                             >
                               <div className="flex justify-between text-xs mb-1.5">
                                 <span className="font-semibold text-slate-800">{option.text}</span>
                                 <span className="font-bold text-indigo-700">{percentage}% ({option.votes}표)</span>
                               </div>
-                              <div className="w-full bg-slate-100 rounded-full h-2">
+                              <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
                                 <div
-                                  className={`h-2 rounded-full ${isSelected ? 'bg-gradient-to-r from-indigo-600 to-cyan-500' : 'bg-slate-300'}`}
+                                  className={`h-2.5 rounded-full transition-all duration-500 ${isSelected ? 'bg-gradient-to-r from-indigo-600 to-cyan-500' : 'bg-slate-300'}`}
                                   style={{ width: `${percentage}%` }}
                                 />
                               </div>
@@ -1012,11 +1055,11 @@
                             placeholder="의견을 남겨주세요."
                             value={newCommentInput[poll.id] || ''}
                             onChange={(e) => setNewCommentInput({ ...newCommentInput, [poll.id]: e.target.value })}
-                            className="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs"
+                            className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm bg-slate-50/50"
                           />
                           <button
                             onClick={() => handleAddComment(poll.id)}
-                            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold"
+                            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-sm"
                           >
                             등록
                           </button>
@@ -1032,43 +1075,100 @@
             {currentTab === 'info' && (
               <div className="max-w-6xl mx-auto px-4 py-8 animate-fadeIn">
                 <div className="mb-8">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">단지 시설 및 생활 수칙 안내</h1>
+                  <span className="text-teal-700 font-bold text-xs uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
+                    Complex Guide
+                  </span>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">단지 시설 및 생활 수칙 안내</h1>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
+                  <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-3">
                     <Trash2 className="w-6 h-6 text-teal-600" />
                     <h3 className="font-bold text-base text-slate-900">재활용 분리수거 배출</h3>
-                    <div className="p-3 bg-teal-50 rounded-lg text-xs space-y-1">
-                      <p className="font-bold text-teal-900">매주 수요일 07:00 ~ 목요일 06:00</p>
-                      <p className="text-red-600">※ 목요일 오전 06시 정각 수거함 마감</p>
+                    <div className="p-3.5 bg-teal-50/80 rounded-2xl text-xs space-y-1.5 border border-teal-100">
+                      <p className="font-bold text-teal-950 text-sm">매주 수요일 07:00 ~ 목요일 06:00</p>
+                      <p className="text-rose-600 font-semibold">※ 목요일 오전 06시 정각 수거함 마감</p>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
+                  <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-3">
                     <Car className="w-6 h-6 text-blue-600" />
                     <h3 className="font-bold text-base text-slate-900">단지 주차 안내</h3>
-                    <p className="text-xs text-slate-600">1세대 1차량 무료 등록, 2차량부터 차등 부담금 부과.</p>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      1세대 1차량 무료 등록, 2차량부터 차등 부담금 부과. 방문 차량은 경비실 또는 모바일 사전 등록 가능합니다.
+                    </p>
                   </div>
 
-                  <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
+                  <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-3">
                     <Phone className="w-6 h-6 text-emerald-600" />
-                    <h3 className="font-bold text-base text-slate-900">주요 연락망</h3>
-                    <p className="text-xs text-slate-600">관리실: 02-2648-4321<br />당직실: 02-2648-4325</p>
+                    <h3 className="font-bold text-base text-slate-900">관리실 직통 연락망</h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      관리실: 02-2648-4321<br />
+                      경리과: 02-2648-4322<br />
+                      당직실: 02-2648-4325
+                    </p>
                   </div>
                 </div>
 
-                <div className="mt-8 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                  <h3 className="font-bold text-base text-slate-900 mb-3">주요 서식 다운로드</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Location & Navigation */}
+                <div className="mt-8 bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
+                    <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                      <MapPin className="w-5 h-5 text-teal-600" /> 목동신시가지 13단지 오시는 길
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%96%91%EC%82%B0%EA%B5%AC%20%EB%AA%A9%EB%8F%99%EB%8F%99%EB%A1%9C%20100"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#03C75A]/15 text-[#2ecc71] border border-[#03C75A]/30 rounded-xl text-xs font-bold hover:bg-[#03C75A]/25 transition"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" /> 네이버지도 길찾기
+                      </a>
+                      <a
+                        href="https://map.kakao.com/link/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%96%91%EC%82%B0%EA%B5%AC%20%EB%AA%A9%EB%8F%99%EB%8F%99%EB%A1%9C%20100"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FEE500]/15 text-[#f1c40f] border border-[#FEE500]/30 rounded-xl text-xs font-bold hover:bg-[#FEE500]/25 transition"
+                      >
+                        <Navigation className="w-3.5 h-3.5" /> 카카오맵 길찾기
+                      </a>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs mt-4">
+                    <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/50">
+                      <p className="text-slate-400 font-semibold">도로명 주소</p>
+                      <p className="text-sm font-bold text-slate-800 mt-1">서울특별시 양천구 목동동로 100</p>
+                      <p className="text-[11px] text-teal-600 mt-0.5 font-medium">관리동 2층 관리사무소</p>
+                    </div>
+                    <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/50">
+                      <p className="text-slate-400 font-semibold">지하철 대중교통</p>
+                      <p className="text-sm font-bold text-slate-800 mt-1">2호선 신정네거리역 / 양천구청역</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">도보 5~10분 거리</p>
+                    </div>
+                    <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/50">
+                      <p className="text-slate-400 font-semibold">자가용 방문</p>
+                      <p className="text-sm font-bold text-slate-800 mt-1">정문 경비실 방문증 발급</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">관리동 전용 주차구역 이용</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Forms Download */}
+                <div className="mt-8 bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm">
+                  <h3 className="font-bold text-base text-slate-900 mb-4">주요 서식 다운로드</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     {formsData.map((f, i) => (
                       <div
                         key={i}
                         onClick={() => handleDownloadForm(f.name)}
-                        className="p-3 bg-slate-50 border rounded-xl flex justify-between items-center cursor-pointer hover:bg-slate-100"
+                        className="p-3.5 bg-slate-50/70 border border-slate-200/60 rounded-2xl flex justify-between items-center cursor-pointer hover:bg-slate-100/80 transition"
                       >
-                        <span className="text-xs font-medium text-slate-800">{f.name}</span>
-                        <Download className="w-4 h-4 text-teal-600" />
+                        <div>
+                          <p className="text-xs font-bold text-slate-800">{f.name}</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">{f.format} • {f.size}</p>
+                        </div>
+                        <Download className="w-4 h-4 text-teal-600 shrink-0" />
                       </div>
                     ))}
                   </div>
@@ -1077,15 +1177,38 @@
             )}
           </main>
 
-          {/* Footer */}
-          <footer className="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 mt-auto py-8">
-            <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div>
-                <p className="font-bold text-slate-200">목동신시가지 13단지 관리사무소</p>
-                <p className="text-slate-400 text-xs mt-1">서울특별시 양천구 목동동로 100 | 이메일: yungh07@naver.com</p>
-                <p className="text-teal-400 font-medium text-xs mt-0.5">위탁관리 : 부동산자산관리사 윤시스템</p>
+          {/* Modern Sleek Footer */}
+          <footer className="bg-[#0B1120] text-slate-400 text-xs border-t border-slate-800 mt-auto py-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-6">
+              <div className="space-y-1.5 text-center sm:text-left">
+                <div className="flex items-center justify-center sm:justify-start gap-2">
+                  <Building2 className="w-4 h-4 text-teal-400" />
+                  <p className="font-bold text-slate-200 text-sm">목동신시가지 13단지 관리사무소</p>
+                </div>
+                <p className="text-slate-400 text-xs">서울특별시 양천구 목동동로 100 | 이메일: yungh07@naver.com</p>
+                <p className="text-teal-400 font-semibold text-xs">위탁관리 : 부동산자산관리사 윤시스템</p>
+                <div className="flex items-center justify-center sm:justify-start gap-2 pt-2">
+                  <a
+                    href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%96%91%EC%82%B0%EA%B5%AC%20%EB%AA%A9%EB%8F%99%EB%8F%99%EB%A1%9C%20100"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#03C75A]/15 border border-[#03C75A]/30 text-[#2ecc71] hover:bg-[#03C75A]/25 transition text-[11px] font-semibold"
+                  >
+                    <ExternalLink className="w-3 h-3" /> 네이버지도
+                  </a>
+                  <a
+                    href="https://map.kakao.com/link/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%96%91%EC%82%B0%EA%B5%AC%20%EB%AA%A9%EB%8F%99%EB%8F%99%EB%A1%9C%20100"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FEE500]/15 border border-[#FEE500]/30 text-[#f1c40f] hover:bg-[#FEE500]/25 transition text-[11px] font-semibold"
+                  >
+                    <Navigation className="w-3 h-3" /> 카카오맵
+                  </a>
+                </div>
               </div>
-              <p className="text-slate-500 text-[11px]">© 2026 목동신시가지 13단지 관리사무소. All rights reserved.</p>
+              <p className="text-slate-500 text-[11px] text-center sm:text-right">
+                © 2026 목동신시가지 13단지 관리사무소. All rights reserved.
+              </p>
             </div>
           </footer>
         </div>
