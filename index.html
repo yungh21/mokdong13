@@ -1,12 +1,1098 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>목동 홈페이지</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>목동신시가지 13단지 관리사무소</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React 18 & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+  <!-- Babel Standalone (브라우저에서 JSX 실행) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+  </style>
 </head>
-<body>
-    <h1>목동 홈페이지</h1>
-    <p>홈페이지가 정상적으로 연결되었습니다.</p>
+<body class="bg-slate-50 text-slate-800 antialiased">
+  <div id="root"></div>
+
+  <!-- Lucide 아이콘 인라인 SVG 정의 및 React 애플리케이션 -->
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    // --- Lucide 아이콘 인라인 SVG 컴포넌트 모음 ---
+    const IconBase = ({ d, className = "w-4 h-4", strokeWidth = 2, fill = "none" }) => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill={fill}
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+      >
+        {d}
+      </svg>
+    );
+
+    const Building2 = (props) => (
+      <IconBase {...props} d={<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2 M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2 M10 6h4 M10 10h4 M10 14h4 M10 18h4" />} />
+    );
+    const Phone = (props) => (
+      <IconBase {...props} d={<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />} />
+    );
+    const Clock = (props) => (
+      <IconBase {...props} d={<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>} />
+    );
+    const MapPin = (props) => (
+      <IconBase {...props} d={<><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></>} />
+    );
+    const Mail = (props) => (
+      <IconBase {...props} d={<><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></>} />
+    );
+    const ShieldAlert = (props) => (
+      <IconBase {...props} d={<><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></>} />
+    );
+    const Wrench = (props) => (
+      <IconBase {...props} d={<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />} />
+    );
+    const HelpCircle = (props) => (
+      <IconBase {...props} d={<><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></>} />
+    );
+    const Vote = (props) => (
+      <IconBase {...props} d={<><path d="m9 12 2 2 4-4"/><path d="M5 7c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v12H5V7Z"/><path d="M22 19H2"/></>} />
+    );
+    const FileText = (props) => (
+      <IconBase {...props} d={<><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></>} />
+    );
+    const ChevronRight = (props) => (
+      <IconBase {...props} d={<path d="m9 18 6-6-6-6" />} />
+    );
+    const ChevronDown = (props) => (
+      <IconBase {...props} d={<path d="m6 9 6 6 6-6" />} />
+    );
+    const Megaphone = (props) => (
+      <IconBase {...props} d={<><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></>} />
+    );
+    const Sparkles = (props) => (
+      <IconBase {...props} d={<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z" />} />
+    );
+    const Navigation = (props) => (
+      <IconBase {...props} d={<polygon points="3 11 22 2 13 21 11 13 3 11" />} />
+    );
+    const ExternalLink = (props) => (
+      <IconBase {...props} d={<><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></>} />
+    );
+    const CheckCircle2 = (props) => (
+      <IconBase {...props} d={<><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></>} />
+    );
+    const AlertCircle = (props) => (
+      <IconBase {...props} d={<><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></>} />
+    );
+    const Info = (props) => (
+      <IconBase {...props} d={<><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="16" y2="12"/><line x1="12" x2="12.01" y1="8" y2="8"/></>} />
+    );
+    const Send = (props) => (
+      <IconBase {...props} d={<><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></>} />
+    );
+    const Camera = (props) => (
+      <IconBase {...props} d={<><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></>} />
+    );
+    const Search = (props) => (
+      <IconBase {...props} d={<><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></>} />
+    );
+    const X = (props) => (
+      <IconBase {...props} d={<path d="M18 6 6 18 M6 6l12 12" />} />
+    );
+    const Menu = (props) => (
+      <IconBase {...props} d={<path d="M4 12h16 M4 6h16 M4 18h16" />} />
+    );
+    const Check = (props) => (
+      <IconBase {...props} d={<polyline points="20 6 9 17 4 12" />} />
+    );
+    const MessageSquare = (props) => (
+      <IconBase {...props} d={<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />} />
+    );
+    const Download = (props) => (
+      <IconBase {...props} d={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></>} />
+    );
+    const Trash2 = (props) => (
+      <IconBase {...props} d={<><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></>} />
+    );
+    const Car = (props) => (
+      <IconBase {...props} d={<><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C1.4 11.2 1 12 1 13v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></>} />
+    );
+    const FileSpreadsheet = (props) => (
+      <IconBase {...props} d={<><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></>} />
+    );
+    const Calendar = (props) => (
+      <IconBase {...props} d={<><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></>} />
+    );
+
+    // --- 메인 App 컴포넌트 ---
+    function App() {
+      const [currentTab, setCurrentTab] = useState('home');
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+      const [noticeModalOpen, setNoticeModalOpen] = useState(false);
+      const [toastMessage, setToastMessage] = useState(null);
+
+      const showToast = (message, type = 'info') => {
+        setToastMessage({ message, type });
+        setTimeout(() => setToastMessage(null), 4000);
+      };
+
+      const [complaintFilter, setComplaintFilter] = useState('전체');
+      const [complaintSearch, setComplaintSearch] = useState('');
+      const [complaints, setComplaints] = useState([
+        {
+          id: 'COMP-2026-104',
+          dong: '1308',
+          ho: '702',
+          category: '소음/주차',
+          title: '지하주차장 B2 진입로 이중주차 규제봉 점검 요청',
+          author: '김*현',
+          date: '2026-10-31',
+          status: '처리중',
+          department: '관리보안과',
+          content: '출근 시간대 지하주차장 B2 코너 부근에 불법 주차가 잦아 시야가 가립니다. 탄력봉 추가 설치를 검토해주세요.',
+          reply: '현장 확인 완료하였으며, 통행 방해 방지용 탄력 규제봉 2개 추가 설치를 11월 2일 진행할 예정입니다.',
+        },
+        {
+          id: 'COMP-2026-103',
+          dong: '1312',
+          ho: '1204',
+          category: '시설보수',
+          title: '단지 내 어린이놀이터(2호) 그네 완충고무 교체 건',
+          author: '이*정',
+          date: '2026-10-29',
+          status: '처리완료',
+          department: '기전보수과',
+          content: '어린이놀이터 2호 그네 좌측 체인 하단 고무 패드가 마모되어 쇠소리가 납니다. 안전점검 부탁드립니다.',
+          reply: '10월 30일 오후 마모된 체인 커버 및 고무 완충재 신품으로 교체 작업 완료하였습니다.',
+        },
+        {
+          id: 'COMP-2026-102',
+          dong: '1303',
+          ho: '301',
+          category: '보안/위생',
+          title: '1303동 뒤편 보행로 가로등 야간 점등 불량',
+          author: '박*호',
+          date: '2026-10-28',
+          status: '처리완료',
+          department: '전기과',
+          content: '야간 20시 이후 보행로 중간 LED 등이 깜빡거리다가 소등됩니다. 야간 보행에 위험합니다.',
+          reply: '안정기 불량으로 확인되어 고효율 방수형 LED 모듈 및 안정기 일체 교체 수리 완료했습니다.',
+        }
+      ]);
+
+      const [selectedComplaint, setSelectedComplaint] = useState(null);
+      const [complaintForm, setComplaintForm] = useState({
+        dong: '',
+        ho: '',
+        name: '',
+        phone: '',
+        category: '시설보수',
+        title: '',
+        content: '',
+        isSecret: false,
+      });
+
+      const handleComplaintSubmit = (e) => {
+        e.preventDefault();
+        if (!complaintForm.dong || !complaintForm.ho || !complaintForm.title || !complaintForm.content) {
+          showToast('동/호수 및 필수 항목을 모두 입력해주세요.', 'error');
+          return;
+        }
+
+        const newEntry = {
+          id: `COMP-2026-${Math.floor(100 + Math.random() * 900)}`,
+          dong: complaintForm.dong,
+          ho: complaintForm.ho,
+          category: complaintForm.category,
+          title: complaintForm.title,
+          author: complaintForm.name ? `${complaintForm.name[0]}*${complaintForm.name.slice(2) || '민'}` : '입주민',
+          date: new Date().toISOString().split('T')[0],
+          status: '접수완료',
+          department: '기전/관리팀 배정중',
+          content: complaintForm.content,
+          reply: '접수가 정상 완료되었습니다. 담당 기전·관리팀에서 확인 후 현장 점검 계획을 남겨드리겠습니다.',
+        };
+
+        setComplaints([newEntry, ...complaints]);
+        showToast(`민원이 성공적으로 접수되었습니다. (접수번호: ${newEntry.id})`, 'success');
+        setComplaintForm({
+          dong: '',
+          ho: '',
+          name: '',
+          phone: '',
+          category: '시설보수',
+          title: '',
+          content: '',
+          isSecret: false,
+        });
+      };
+
+      const filteredComplaints = useMemo(() => {
+        return complaints.filter((c) => {
+          const matchFilter = complaintFilter === '전체' || c.status === complaintFilter;
+          const matchSearch =
+            c.title.toLowerCase().includes(complaintSearch.toLowerCase()) ||
+            c.content.toLowerCase().includes(complaintSearch.toLowerCase()) ||
+            c.dong.includes(complaintSearch) ||
+            c.ho.includes(complaintSearch) ||
+            c.id.toLowerCase().includes(complaintSearch.toLowerCase());
+          return matchFilter && matchSearch;
+        });
+      }, [complaints, complaintFilter, complaintSearch]);
+
+      const formsData = [
+        { name: '세대 인테리어 공사 신청서 및 입주민 동의서 서식', size: '142 KB', format: 'HWP/PDF' },
+        { name: '승강기(엘리베이터) 사용 신청 및 예치금 납부서', size: '98 KB', format: 'PDF' },
+        { name: '입주민 차량 등록 및 정기주차 스티커 신청서', size: '85 KB', format: 'PDF' },
+        { name: '입주자대표회의 안건 제안서 및 주민 위임장', size: '110 KB', format: 'HWP/DOC' }
+      ];
+
+      const handleDownloadForm = (formName) => {
+        showToast(`[${formName}] 다운로드가 시작되었습니다.`, 'success');
+      };
+
+      // FAQ
+      const [faqCategory, setFaqCategory] = useState('전체');
+      const [faqSearch, setFaqSearch] = useState('');
+      const [expandedFaq, setExpandedFaq] = useState(null);
+
+      const faqData = [
+        {
+          id: 1,
+          category: '인테리어/이사',
+          question: '세대 내 인테리어 공사 시 사전 신고 절차 및 공사 예치금 기준은?',
+          answer: '공사 시작 최소 7일 전 관리사무소에 방문하여 [공사신고서] 및 [해당 동 입주민 과반수 동의서(인접 4개 층 필수)]를 제출하셔야 합니다. 소음 유발 공사(철거/마루/욕실 등)는 평일 09:00~17:00에만 가능하며(주말·공휴일 불가), 공사 예치금(30만원~50만원 규정)과 승강기 사용료가 부과됩니다.',
+          tag: '인테리어'
+        },
+        {
+          id: 2,
+          category: '주차/차량',
+          question: '신규 입주민 차량 등록 및 방문 차량 예약 방법은?',
+          answer: '입주민 정기 주차 등록은 차량등록증 및 주민등록등본을 지참하여 관리사무소 방문 등록 또는 관리앱을 통해 신청 가능합니다. 1세대 1차량은 무료이며, 2차량부터는 단지 주차관리 규정에 따른 차등 주차관리비가 적용됩니다.',
+          tag: '차량등록'
+        },
+        {
+          id: 3,
+          category: '재활용/쓰레기',
+          question: '재활용 쓰레기 분리배출 요일 및 시간, 대형폐기물 스티커 구매는 어떻게 하나요?',
+          answer: '목동13단지의 재활용 분리수거는 매주 수요일 07:00부터 목요일 오전 06:00까지 배출 가능합니다. 수거차량 진입 및 쾌적한 단지 환경정리를 위해 목요일 오전 6시 정각에 각 동 수거함이 마감·철거되오니 배출 시간을 준수해 주시기 바랍니다.',
+          tag: '분리수거'
+        },
+        {
+          id: 4,
+          category: '관리비/정산',
+          question: '이사(전출/전입) 시 관리비 중간정산 절차는 어떻게 되나요?',
+          answer: '이사 당일 수도, 전기, 가스 계량기 수치를 확인하신 후 관리사무소 경리과(02-2648-4322)로 연락 주시면 이사 당일까지의 관리비 정산서를 즉시 발급해 드립니다.',
+          tag: '관리비정산'
+        }
+      ];
+
+      const filteredFaqs = useMemo(() => {
+        return faqData.filter((item) => {
+          const matchCategory = faqCategory === '전체' || item.category === faqCategory;
+          const matchSearch =
+            item.question.toLowerCase().includes(faqSearch.toLowerCase()) ||
+            item.answer.toLowerCase().includes(faqSearch.toLowerCase()) ||
+            item.tag.toLowerCase().includes(faqSearch.toLowerCase());
+          return matchCategory && matchSearch;
+        });
+      }, [faqCategory, faqSearch]);
+
+      // Smart Polls
+      const [polls, setPolls] = useState([
+        {
+          id: 'POLL-01',
+          title: '2026 가을 단지 내 수목 전지작업 및 화단 정비 계획 주민의견 수렴',
+          desc: '1301동~1330동 저층 세대 일조권 확보와 보행로 안전을 위한 조경수 전지작업 및 중앙광장 화단 국화 식재 계획안에 대한 주민의견을 수렴합니다.',
+          endDate: '2026-11-15',
+          badge: '진행중',
+          totalVotes: 342,
+          userVoted: null,
+          options: [
+            { id: 'opt1', text: '찬성 (저층 일조권 개선 및 전지 필수 추진)', votes: 268 },
+            { id: 'opt2', text: '수정 추진 (보행로 위주 최소 전지)', votes: 54 },
+            { id: 'opt3', text: '반대 (현재 울창한 숲 형태 유지 희망)', votes: 20 },
+          ],
+          comments: [
+            { author: '1305동 주민', text: '저층 베란다 나뭇가지가 무성했는데 꼭 진행되었으면 합니다.', date: '10-30' },
+            { author: '1314동 주민', text: '전지 작업 시 차량 낙하물 피해 없도록 사전 예고 부탁드립니다.', date: '10-29' }
+          ]
+        },
+        {
+          id: 'POLL-02',
+          title: '지하주차장 스마트 고효율 센서형 LED 전면 교체(절전 사업) 건',
+          desc: '공용 관리비 절감(연간 약 2,100만원 전력비 절감) 및 조도 개선을 위한 지하주차장 스마트 LED 교체 찬반 투표입니다.',
+          endDate: '2026-11-10',
+          badge: '진행중',
+          totalVotes: 512,
+          userVoted: 'opt1',
+          options: [
+            { id: 'opt1', text: '적극 찬성 (관리비 절감 및 시인성 개선)', votes: 472 },
+            { id: 'opt2', text: '반대 / 현행 유지', votes: 40 },
+          ],
+          comments: [
+            { author: '1322동 주민', text: '지하주차장이 어두웠는데 센서형 LED로 교체하면 훨씬 밝고 안전해지겠네요.', date: '10-28' }
+          ]
+        }
+      ]);
+
+      const [newCommentInput, setNewCommentInput] = useState({});
+
+      const handleVote = (pollId, optionId) => {
+        const target = polls.find(p => p.id === pollId);
+        if (target && target.userVoted) {
+          showToast('이미 투표에 참여하셨습니다. (1세대 1회 참여 가능)', 'info');
+          return;
+        }
+
+        setPolls(prev =>
+          prev.map(poll => {
+            if (poll.id !== pollId) return poll;
+            return {
+              ...poll,
+              userVoted: optionId,
+              totalVotes: poll.totalVotes + 1,
+              options: poll.options.map(opt =>
+                opt.id === optionId ? { ...opt, votes: opt.votes + 1 } : opt
+              ),
+            };
+          })
+        );
+        showToast('소중한 입주민 투표가 성공적으로 집계되었습니다.', 'success');
+      };
+
+      const handleAddComment = (pollId) => {
+        const text = newCommentInput[pollId];
+        if (!text || !text.trim()) {
+          showToast('의견 내용을 입력해주세요.', 'info');
+          return;
+        }
+
+        setPolls(prev =>
+          prev.map(poll => {
+            if (poll.id !== pollId) return poll;
+            return {
+              ...poll,
+              comments: [
+                { author: '목동13단지 입주민', text: text.trim(), date: '방금 전' },
+                ...poll.comments
+              ]
+            };
+          })
+        );
+        setNewCommentInput(prev => ({ ...prev, [pollId]: '' }));
+        showToast('주민 의견이 등록되었습니다.', 'success');
+      };
+
+      return (
+        <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col selection:bg-teal-500 selection:text-white">
+          {/* Toast */}
+          {toastMessage && (
+            <div className="fixed top-4 right-4 z-50 max-w-sm">
+              <div className={`px-4 py-3 rounded-2xl shadow-xl border text-sm font-semibold flex items-center gap-3 backdrop-blur-md ${
+                toastMessage.type === 'error'
+                  ? 'bg-rose-900/90 text-white border-rose-700'
+                  : toastMessage.type === 'success'
+                  ? 'bg-teal-900/90 text-white border-teal-600'
+                  : 'bg-slate-900/90 text-white border-slate-700'
+              }`}>
+                {toastMessage.type === 'success' && <CheckCircle2 className="w-5 h-5 text-teal-300 shrink-0" />}
+                {toastMessage.type === 'error' && <AlertCircle className="w-5 h-5 text-rose-300 shrink-0" />}
+                {toastMessage.type === 'info' && <Info className="w-5 h-5 text-indigo-300 shrink-0" />}
+                <span>{toastMessage.message}</span>
+                <button onClick={() => setToastMessage(null)} className="ml-auto text-slate-400 hover:text-white text-xs p-1">✕</button>
+              </div>
+            </div>
+          )}
+
+          {/* Top Bar */}
+          <div className="bg-slate-900 text-slate-300 text-xs border-b border-slate-800 px-4 py-2">
+            <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+              <div className="flex items-center flex-wrap gap-2 sm:gap-3">
+                <span className="inline-flex items-center gap-1 text-teal-400 font-medium">
+                  <MapPin className="w-3.5 h-3.5" /> 서울특별시 양천구 목동동로 100 (목동신시가지 13단지)
+                </span>
+                <span className="hidden sm:inline text-slate-600">|</span>
+                <div className="flex items-center gap-1.5">
+                  <a
+                    href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%96%91%EC%82%B0%EA%B5%AC%20%EB%AA%A9%EB%8F%99%EB%8F%99%EB%A1%9C%20100"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-300 hover:text-white hover:bg-emerald-800 transition text-[11px] font-medium border border-emerald-700/50"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span> 네이버지도
+                  </a>
+                  <a
+                    href="https://map.kakao.com/link/search/서울특별시 양천구 목동동로 100"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-yellow-950 text-yellow-300 hover:text-white hover:bg-yellow-800 transition text-[11px] font-medium border border-yellow-700/50"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 inline-block"></span> 카카오맵
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+                <a href="mailto:yungh07@naver.com" className="hover:text-teal-400 transition flex items-center gap-1 text-slate-300">
+                  <Mail className="w-3 h-3 text-teal-400" /> yungh07@naver.com
+                </a>
+                <span className="text-slate-600 hidden sm:inline">|</span>
+                <a href="tel:0226484321" className="hover:text-teal-400 transition flex items-center gap-1 font-semibold text-slate-200">
+                  <Phone className="w-3 h-3 text-teal-400" /> 02-2648-4321
+                </a>
+                <span className="text-slate-600">|</span>
+                <span className="flex items-center gap-1 text-amber-400 font-semibold">
+                  <ShieldAlert className="w-3 h-3" /> 당직실: 02-2648-4325
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Header */}
+          <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-20">
+                <div onClick={() => setCurrentTab('home')} className="flex items-center gap-3 cursor-pointer group">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-teal-700 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+                    <Building2 className="w-6 h-6 text-teal-300" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 group-hover:text-teal-700 transition">
+                        목동신시가지 13단지
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-teal-50 text-teal-700 border border-teal-200">
+                        관리사무소
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 font-medium">Mokdong Complex 13 Smart Resident Portal</p>
+                  </div>
+                </div>
+
+                <nav className="hidden lg:flex items-center gap-1">
+                  {[
+                    { id: 'home', label: '단지 홈' },
+                    { id: 'complaints', label: '불편사항 및 민원접수' },
+                    { id: 'faq', label: '입주민 Q&A (FAQ)' },
+                    { id: 'polls', label: '주민의견·투표' },
+                    { id: 'info', label: '단지·관리비 안내' },
+                  ].map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setCurrentTab(tab.id)}
+                      className={`px-4 py-2 rounded-xl text-sm font-semibold transition ${
+                        currentTab === tab.id
+                          ? 'bg-slate-900 text-white shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }`}
+                    >
+                      {tab.label}
+                      {tab.id === 'polls' && (
+                        <span className="ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] bg-indigo-500 text-white font-bold">
+                          투표중
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </nav>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentTab('complaints')}
+                    className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow-sm transition active:scale-95"
+                  >
+                    <Wrench className="w-4 h-4" /> 빠른 민원접수
+                  </button>
+                  <button
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    className="lg:hidden p-2.5 rounded-xl text-slate-700 hover:bg-slate-100 transition"
+                  >
+                    {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {mobileMenuOpen && (
+              <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-2 animate-fadeIn">
+                {[
+                  { id: 'home', label: '단지 홈' },
+                  { id: 'complaints', label: '불편사항 및 민원접수' },
+                  { id: 'faq', label: '입주민 Q&A (FAQ)' },
+                  { id: 'polls', label: '주민의견수렴 및 투표' },
+                  { id: 'info', label: '단지 시설 및 생활규정 안내' },
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setCurrentTab(tab.id);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-3 rounded-xl text-sm font-semibold flex items-center justify-between ${
+                      currentTab === tab.id ? 'bg-teal-50 text-teal-800 font-bold' : 'text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </header>
+
+          {/* Banner */}
+          <div className="bg-gradient-to-r from-teal-900 via-slate-900 to-indigo-950 text-white py-2.5 px-4">
+            <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 text-xs sm:text-sm">
+              <div className="flex items-center gap-2 overflow-hidden cursor-pointer" onClick={() => setNoticeModalOpen(true)}>
+                <span className="shrink-0 flex items-center gap-1 font-bold px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-500/40">
+                  <Megaphone className="w-3.5 h-3.5" /> 단지 공지
+                </span>
+                <p className="truncate text-slate-200 hover:underline">
+                  1301동~1315동 승강기 정기 안전점검이 11월 4일(수) 오전 10시부터 순차 진행됩니다.
+                </p>
+              </div>
+              <button onClick={() => setNoticeModalOpen(true)} className="hidden md:inline-flex items-center gap-1 shrink-0 text-cyan-300 text-xs hover:underline">
+                상세보기 <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+
+          {/* Modal */}
+          {noticeModalOpen && (
+            <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl animate-fadeIn">
+                <div className="flex justify-between items-start pb-3 border-b border-slate-100">
+                  <h3 className="font-bold text-slate-900 text-base">승강기 정기 안전점검 실시 안내</h3>
+                  <button onClick={() => setNoticeModalOpen(false)} className="text-slate-400 hover:text-slate-600 p-1">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="py-4 text-xs sm:text-sm text-slate-600 space-y-2">
+                  <p><strong>점검 일시:</strong> 2026년 11월 4일(수) 10:00 ~ 16:00</p>
+                  <p><strong>점검 대상:</strong> 1301동 ~ 1315동 전 승강기 (동별 약 40분 정지)</p>
+                  <p className="p-3 bg-amber-50 text-amber-900 rounded-xl border border-amber-200 text-xs">
+                    ※ 점검 중에는 승강기 탑승이 불가하오니 계단을 이용해 주시기 바랍니다.
+                  </p>
+                </div>
+                <div className="flex justify-end">
+                  <button onClick={() => setNoticeModalOpen(false)} className="px-5 py-2 bg-slate-900 text-white rounded-xl text-xs font-semibold">
+                    닫기
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Main Content */}
+          <main className="flex-1 pb-16">
+            {currentTab === 'home' && (
+              <div>
+                <section className="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white py-16 px-4">
+                  <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div className="lg:col-span-8 space-y-5">
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-teal-300 text-xs font-medium">
+                        <Sparkles className="w-4 h-4" /> 양천 목동신시가지 대표 명품 주거단지
+                      </div>
+                      <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight">
+                        쾌적하고 안전한 일상, <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-cyan-200 to-indigo-300">
+                          목동13단지 관리사무소
+                        </span>가 함께합니다.
+                      </h1>
+                      <p className="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+                        입주민의 편의와 시설 안전을 최우선으로 생각합니다. 불편사항 신고부터 관리비 조회, 주민의견 수렴까지 신속하게 처리해 드립니다.
+                      </p>
+                      <div className="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
+                        <div className="bg-slate-800/80 rounded-xl p-3 border border-slate-700/60">
+                          <p className="text-xs text-slate-400">단지 규모</p>
+                          <p className="text-lg font-bold text-white mt-0.5">32개동 2,280세대</p>
+                        </div>
+                        <div className="bg-slate-800/80 rounded-xl p-3 border border-slate-700/60">
+                          <p className="text-xs text-slate-400">민원 처리율</p>
+                          <p className="text-lg font-bold text-teal-400 mt-0.5">99.2% 완료</p>
+                        </div>
+                        <div className="bg-slate-800/80 rounded-xl p-3 border border-slate-700/60">
+                          <p className="text-xs text-slate-400">분리수거 배출</p>
+                          <p className="text-xs sm:text-sm font-bold text-emerald-300 mt-1">수 07:00~목 06:00</p>
+                        </div>
+                        <div className="bg-slate-800/80 rounded-xl p-3 border border-slate-700/60">
+                          <p className="text-xs text-slate-400">비상 당직체계</p>
+                          <p className="text-lg font-bold text-amber-300 mt-0.5">365일 상시근무</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="lg:col-span-4 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/15 text-white">
+                      <div className="flex items-center justify-between pb-4 border-b border-white/15">
+                        <span className="text-sm font-semibold flex items-center gap-1.5 text-teal-300">
+                          <Clock className="w-4 h-4" /> 관리실 운영 현황
+                        </span>
+                        <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold rounded-full">
+                          정상 업무중
+                        </span>
+                      </div>
+                      <div className="mt-4 space-y-3 text-xs sm:text-sm">
+                        <div className="flex justify-between py-1 border-b border-white/10">
+                          <span className="text-slate-300">평일 근무시간</span>
+                          <span className="font-semibold text-slate-100">09:00 ~ 18:00</span>
+                        </div>
+                        <div className="flex justify-between py-1 border-b border-white/10">
+                          <span className="text-slate-300">점심 시간</span>
+                          <span className="font-semibold text-slate-100">12:00 ~ 13:00</span>
+                        </div>
+                        <div className="flex justify-between py-1 border-b border-white/10">
+                          <span className="text-slate-300">공식 문의메일</span>
+                          <a href="mailto:yungh07@naver.com" className="font-semibold text-teal-300 hover:underline">yungh07@naver.com</a>
+                        </div>
+                        <div className="flex justify-between py-1">
+                          <span className="text-emerald-300 font-medium">분리수거 배출</span>
+                          <span className="font-bold text-emerald-300">수 07:00 ~ 목 06:00</span>
+                        </div>
+                      </div>
+
+                      <div className="mt-5 pt-3 border-t border-white/15 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <a
+                            href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%96%91%EC%82%B0%EA%B5%AC%20%EB%AA%A9%EB%8F%99%EB%8F%99%EB%A1%9C%20100"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex-1 py-2 px-3 bg-emerald-600/90 hover:bg-emerald-600 text-white rounded-xl text-xs flex items-center justify-center gap-1.5"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" /> 네이버지도
+                          </a>
+                          <a
+                            href="https://map.kakao.com/link/search/서울특별시 양천구 목동동로 100"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex-1 py-2 px-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5"
+                          >
+                            <Navigation className="w-3.5 h-3.5" /> 카카오맵
+                          </a>
+                        </div>
+                        <button
+                          onClick={() => setCurrentTab('complaints')}
+                          className="w-full py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-xl text-xs sm:text-sm"
+                        >
+                          우리 집 보수·민원 즉시 신청
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 4 Quick Actions */}
+                <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[
+                      {
+                        title: '불편사항·민원 접수',
+                        desc: '단지 내 시설, 소음, 전기/설비 보수 요청 및 실시간 처리현황',
+                        icon: Wrench,
+                        color: 'text-teal-600 bg-teal-50 border-teal-200',
+                        action: () => setCurrentTab('complaints'),
+                        badge: '실시간 접수',
+                      },
+                      {
+                        title: '입주민 Q&A',
+                        desc: '인테리어 공사, 승강기 예약, 주차 기준 확인',
+                        icon: HelpCircle,
+                        color: 'text-cyan-600 bg-cyan-50 border-cyan-200',
+                        action: () => setCurrentTab('faq'),
+                        badge: '자주 묻는 질문',
+                      },
+                      {
+                        title: '주민의견수렴·투표',
+                        desc: '단지 조경, 공용시설 개선 등 스마트 자치 찬반 의견',
+                        icon: Vote,
+                        color: 'text-indigo-600 bg-indigo-50 border-indigo-200',
+                        action: () => setCurrentTab('polls'),
+                        badge: '진행중 2건',
+                      },
+                      {
+                        title: '생활규정 및 시설안내',
+                        desc: '분리수거 요일, 이사 사다리차, 비상연락망',
+                        icon: FileText,
+                        color: 'text-emerald-600 bg-emerald-50 border-emerald-200',
+                        action: () => setCurrentTab('info'),
+                        badge: '상세 가이드',
+                      },
+                    ].map((item, idx) => (
+                      <div
+                        key={idx}
+                        onClick={item.action}
+                        className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md border border-slate-200 transition cursor-pointer group flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className={`p-3 rounded-xl border ${item.color}`}>
+                              <item.icon className="w-5 h-5" />
+                            </div>
+                            <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                              {item.badge}
+                            </span>
+                          </div>
+                          <h3 className="font-bold text-slate-900 group-hover:text-teal-600 transition">{item.title}</h3>
+                          <p className="text-xs text-slate-500 mt-1 line-clamp-2">{item.desc}</p>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-teal-600">
+                          <span>바로 이동하기</span>
+                          <ChevronRight className="w-4 h-4" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* Complaints Tab */}
+            {currentTab === 'complaints' && (
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fadeIn">
+                <div className="mb-8">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">입주민 불편사항 및 시설보수 접수</h1>
+                  <p className="text-slate-500 text-sm mt-1">접수해 주시면 전문 기전/관리팀이 신속히 현장을 점검하고 결과를 안내합니다.</p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                  <div className="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm h-fit">
+                    <form onSubmit={handleComplaintSubmit} className="space-y-4 text-sm">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">동 번호 *</label>
+                          <input
+                            type="number"
+                            placeholder="예: 1308"
+                            required
+                            value={complaintForm.dong}
+                            onChange={(e) => setComplaintForm({ ...complaintForm, dong: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">호수 *</label>
+                          <input
+                            type="number"
+                            placeholder="예: 702"
+                            required
+                            value={complaintForm.ho}
+                            onChange={(e) => setComplaintForm({ ...complaintForm, ho: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">신청인</label>
+                          <input
+                            type="text"
+                            placeholder="홍길동"
+                            value={complaintForm.name}
+                            onChange={(e) => setComplaintForm({ ...complaintForm, name: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">연락처</label>
+                          <input
+                            type="tel"
+                            placeholder="010-0000-0000"
+                            value={complaintForm.phone}
+                            onChange={(e) => setComplaintForm({ ...complaintForm, phone: e.target.value })}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">민원 분류</label>
+                        <select
+                          value={complaintForm.category}
+                          onChange={(e) => setComplaintForm({ ...complaintForm, category: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white"
+                        >
+                          <option value="시설보수">공용부/전용부 시설보수</option>
+                          <option value="소음/주차">층간소음 / 지하주차장</option>
+                          <option value="보안/위생">보안·가로등 / 분리수거</option>
+                          <option value="승강기">승강기 이상점검</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">제목 *</label>
+                        <input
+                          type="text"
+                          placeholder="불편사항 요약"
+                          required
+                          value={complaintForm.title}
+                          onChange={(e) => setComplaintForm({ ...complaintForm, title: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">상세 내용 *</label>
+                        <textarea
+                          rows={4}
+                          placeholder="발생 위치, 현상, 요청사항을 구체적으로 적어주세요."
+                          required
+                          value={complaintForm.content}
+                          onChange={(e) => setComplaintForm({ ...complaintForm, content: e.target.value })}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm resize-none"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl transition shadow flex items-center justify-center gap-2"
+                      >
+                        <Send className="w-4 h-4" /> 민원 접수 제출하기
+                      </button>
+                    </form>
+                  </div>
+
+                  <div className="lg:col-span-7 space-y-4">
+                    <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <h3 className="font-bold text-slate-900 text-base">실시간 민원 처리 현황</h3>
+                        <div className="flex items-center gap-1.5 text-xs">
+                          {['전체', '접수완료', '처리중', '처리완료'].map((status) => (
+                            <button
+                              key={status}
+                              onClick={() => setComplaintFilter(status)}
+                              className={`px-3 py-1 rounded-lg text-xs font-semibold ${
+                                complaintFilter === status ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'
+                              }`}
+                            >
+                              {status}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="text"
+                          placeholder="접수번호, 동/호수 또는 키워드로 검색"
+                          value={complaintSearch}
+                          onChange={(e) => setComplaintSearch(e.target.value)}
+                          className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      {filteredComplaints.map((item) => (
+                        <div
+                          key={item.id}
+                          onClick={() => setSelectedComplaint(item)}
+                          className="bg-white rounded-2xl p-5 border border-slate-200 hover:border-teal-400 transition cursor-pointer"
+                        >
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <span className="text-xs font-bold text-slate-500 font-mono">{item.id}</span>
+                            <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700">
+                              {item.status}
+                            </span>
+                          </div>
+                          <h4 className="text-base font-bold text-slate-900">{item.title}</h4>
+                          <p className="text-xs text-slate-500 mt-1 line-clamp-2">{item.content}</p>
+                          <div className="mt-3 pt-2 border-t border-slate-100 flex justify-between text-xs text-slate-400">
+                            <span>{item.dong}동 {item.ho}호</span>
+                            <span>{item.date}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* FAQ Tab */}
+            {currentTab === 'faq' && (
+              <div className="max-w-5xl mx-auto px-4 py-8 animate-fadeIn">
+                <div className="text-center max-w-2xl mx-auto mb-8">
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">입주민 자주 묻는 질문 (Q&A)</h1>
+                  <p className="text-slate-500 text-sm mt-2">인테리어 공사, 이사, 주차 등록 등 가장 자주 문의하시는 내용입니다.</p>
+                </div>
+                <div className="space-y-3">
+                  {faqData.map((faq) => (
+                    <div key={faq.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                      <button
+                        onClick={() => setExpandedFaq(expandedFaq === faq.id ? null : faq.id)}
+                        className="w-full px-5 py-4 text-left flex items-start justify-between gap-4 hover:bg-slate-50 transition"
+                      >
+                        <div className="flex items-start gap-3">
+                          <span className="w-6 h-6 rounded-lg bg-teal-50 text-teal-700 font-bold text-xs flex items-center justify-center shrink-0">
+                            Q
+                          </span>
+                          <span className="text-sm sm:text-base font-bold text-slate-900">{faq.question}</span>
+                        </div>
+                        <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${expandedFaq === faq.id ? 'rotate-180' : ''}`} />
+                      </button>
+                      {expandedFaq === faq.id && (
+                        <div className="px-5 pb-5 pt-1 text-slate-700 text-xs sm:text-sm leading-relaxed border-t border-slate-100 bg-slate-50/50">
+                          <p className="pt-3">{faq.answer}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Polls Tab */}
+            {currentTab === 'polls' && (
+              <div className="max-w-5xl mx-auto px-4 py-8 animate-fadeIn">
+                <div className="mb-8">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">스마트 주민 의견수렴 및 자치 설문·투표</h1>
+                  <p className="text-slate-500 text-sm mt-1">단지의 주요 안건을 입주민의 참여로 투명하게 결정합니다.</p>
+                </div>
+
+                <div className="space-y-6">
+                  {polls.map((poll) => (
+                    <div key={poll.id} className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
+                      <div className="border-b border-slate-100 pb-3">
+                        <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200">
+                          {poll.badge}
+                        </span>
+                        <h2 className="text-lg font-bold text-slate-900 mt-2">{poll.title}</h2>
+                        <p className="text-xs sm:text-sm text-slate-600 mt-1">{poll.desc}</p>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {poll.options.map((option) => {
+                          const percentage = Math.round((option.votes / poll.totalVotes) * 100) || 0;
+                          const isSelected = poll.userVoted === option.id;
+                          return (
+                            <div
+                              key={option.id}
+                              onClick={() => handleVote(poll.id, option.id)}
+                              className={`p-3.5 rounded-xl border transition cursor-pointer ${
+                                isSelected ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-500/20' : 'border-slate-200 hover:bg-slate-50'
+                              }`}
+                            >
+                              <div className="flex justify-between text-xs mb-1.5">
+                                <span className="font-semibold text-slate-800">{option.text}</span>
+                                <span className="font-bold text-indigo-700">{percentage}% ({option.votes}표)</span>
+                              </div>
+                              <div className="w-full bg-slate-100 rounded-full h-2">
+                                <div
+                                  className={`h-2 rounded-full ${isSelected ? 'bg-gradient-to-r from-indigo-600 to-cyan-500' : 'bg-slate-300'}`}
+                                  style={{ width: `${percentage}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="pt-3 border-t border-slate-100">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="의견을 남겨주세요."
+                            value={newCommentInput[poll.id] || ''}
+                            onChange={(e) => setNewCommentInput({ ...newCommentInput, [poll.id]: e.target.value })}
+                            className="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs"
+                          />
+                          <button
+                            onClick={() => handleAddComment(poll.id)}
+                            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold"
+                          >
+                            등록
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Info Tab */}
+            {currentTab === 'info' && (
+              <div className="max-w-6xl mx-auto px-4 py-8 animate-fadeIn">
+                <div className="mb-8">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">단지 시설 및 생활 수칙 안내</h1>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
+                    <Trash2 className="w-6 h-6 text-teal-600" />
+                    <h3 className="font-bold text-base text-slate-900">재활용 분리수거 배출</h3>
+                    <div className="p-3 bg-teal-50 rounded-lg text-xs space-y-1">
+                      <p className="font-bold text-teal-900">매주 수요일 07:00 ~ 목요일 06:00</p>
+                      <p className="text-red-600">※ 목요일 오전 06시 정각 수거함 마감</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
+                    <Car className="w-6 h-6 text-blue-600" />
+                    <h3 className="font-bold text-base text-slate-900">단지 주차 안내</h3>
+                    <p className="text-xs text-slate-600">1세대 1차량 무료 등록, 2차량부터 차등 부담금 부과.</p>
+                  </div>
+
+                  <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
+                    <Phone className="w-6 h-6 text-emerald-600" />
+                    <h3 className="font-bold text-base text-slate-900">주요 연락망</h3>
+                    <p className="text-xs text-slate-600">관리실: 02-2648-4321<br />당직실: 02-2648-4325</p>
+                  </div>
+                </div>
+
+                <div className="mt-8 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                  <h3 className="font-bold text-base text-slate-900 mb-3">주요 서식 다운로드</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {formsData.map((f, i) => (
+                      <div
+                        key={i}
+                        onClick={() => handleDownloadForm(f.name)}
+                        className="p-3 bg-slate-50 border rounded-xl flex justify-between items-center cursor-pointer hover:bg-slate-100"
+                      >
+                        <span className="text-xs font-medium text-slate-800">{f.name}</span>
+                        <Download className="w-4 h-4 text-teal-600" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+
+          {/* Footer */}
+          <footer className="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 mt-auto py-8">
+            <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div>
+                <p className="font-bold text-slate-200">목동신시가지 13단지 관리사무소</p>
+                <p className="text-slate-400 text-xs mt-1">서울특별시 양천구 목동동로 100 | 이메일: yungh07@naver.com</p>
+                <p className="text-teal-400 font-medium text-xs mt-0.5">위탁관리 : 부동산자산관리사 윤시스템</p>
+              </div>
+              <p className="text-slate-500 text-[11px]">© 2026 목동신시가지 13단지 관리사무소. All rights reserved.</p>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
 </body>
 </html>
